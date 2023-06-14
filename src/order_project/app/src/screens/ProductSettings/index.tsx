@@ -25,7 +25,7 @@ export default ({route}:any) => {
     const [description, setDescription] = useState<string>("");
     const [price, setPrice] = useState<string>("");
     const [category, setCategory] = useState<string>();
-    const [image, setImage] = useState<any>();
+    const [image, setImage] = useState<any | null>();
     const [categories, setCategories] = useState<Category[]>([]);
     const [notice, setNotice] = useState<Notice>({text: ""});
     const [isNoticeVisible, setIsNoticeVisible] = useState<boolean>(false);
@@ -58,21 +58,20 @@ export default ({route}:any) => {
             productData.append('price', price);
             productData.append('description', description);
             productData.append('category', categories?.[category]?._id);
-            
-            const imgName = image.uri.substr(image.uri.lastIndexOf('/')+1);
-            const imgType = "image/"+imgName.substr(imgName.lastIndexOf('.')+1);
-            productData.append('image', {...image, name: imgName, type: imgType}, imgName);
 
-            const results = await api.post("/products", productData, {headers:{'Content-Type': 'multipart/form-data', 'Accept': 'multipart/form-data'}});
+            // const imgName = image.uri.substr(image.uri.lastIndexOf('/')+1);
+            // const imgType = "image/"+imgName.substr(imgName.lastIndexOf('.')+1);
+            // productData.append('image', {...image, name: imgName, type: imgType}, imgName);
+
+            const results = await api.post("/products", productData, { headers:{'Content-Type': 'multipart/form-data', 'Accept': 'multipart/form-data'}});
             setNotice({text: "O produto foi salvo com sucesso!", type: "success"});
             setIsNoticeVisible(true);
         }catch(e){
-            console.log(JSON.stringify(e))
             setNotice({text: "Um erro ocorreu! Tente novamente.", type: "error"})
             setIsNoticeVisible(true);
         }
     }
-    
+
     return(
         <Container>
             <Content>
@@ -97,7 +96,7 @@ export default ({route}:any) => {
                         selectedValue={category}
                         onValueChange={(value) => {
                             if(value != "")
-                                setCategory(value) 
+                                setCategory(value)
                         }}
                     >
                         <Picker.Item key={"PicI"+-1} label="Escolha uma categoria" value="" />
@@ -113,24 +112,24 @@ export default ({route}:any) => {
                     <Input value={description} onChangeText={setDescription} placeholder='Descrição' variant="multi" />
                 </Row>
                 <Spacing bottom={16} />
-                <TouchRow onPress={()=>Promise.all([openImagePicker()]).then(([val])=>setImage(val) )}>
-                    <ItemImage source={{uri: image?.uri}} />                        
+                {/* <TouchRow onPress={()=>Promise.all([openImagePicker()]).then(([val])=>setImage(val) )}>
+                    <ItemImage source={{uri: image?.uri}} />
                     <Center>
                         <Text size={16} color="#666" >Adicione uma imagem do produto</Text>
                     </Center>
-                </TouchRow>
+                </TouchRow> */}
                 <Spacing bottom={16} />
 
-            </Content> 
+            </Content>
             <ButtonContainer>
                 <Row>
-                    <Button onPress={createProduct} disabled={!name || !price || !description || !category || !image } >Salvar</Button>
+                    <Button onPress={createProduct} disabled={!name || !price || !description || !category} >Salvar</Button>
                 </Row>
                 <Spacing bottom={16} />
             </ButtonContainer>
-            <NoticeModal 
+            <NoticeModal
                 visible={isNoticeVisible}
-                onClose={() =>{ 
+                onClose={() =>{
                     setIsNoticeVisible(false);
                     if(notice?.type == "success"){
                         goBack();

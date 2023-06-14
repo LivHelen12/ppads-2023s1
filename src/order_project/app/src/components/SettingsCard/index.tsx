@@ -32,11 +32,11 @@ export default (props: SettingsCardProps) => {
     const deleteItem = async () =>{
         try{
             if(props?.imagePath){
-                const results = await api.delete("/products/"+props?._id);                
+                const results = await api.delete("/products/"+props?._id);
             }else{
                 const results = await api.delete("/categories/"+props?._id);
             }
-            
+
             setNotice({text: (props?.imagePath ? "Products" : "Categoria") + " foi removida com sucesso!", type: "success"});
             setIsNoticeVisible(true);
             props.onUpdate();
@@ -67,7 +67,7 @@ export default (props: SettingsCardProps) => {
 
               <RowReverse>
                 {!props?.imagePath &&
-                    <IconTouch onPress={()=>navigation.navigate("CategorySettings", { category: props })} >
+                    <IconTouch onPress={() => navigation.navigate("CategorySettings", { category: props })} >
                         <PencilSquare />
                     </IconTouch>
                 }
